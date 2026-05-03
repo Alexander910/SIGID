@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SIGID — Sistema Web de Control de Stock">
+    <title>Inventario — SIGID</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SIGID Theme -->
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-box-seam-fill"></i>
+            SIGID
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">Principal</div>
+            <a href="/" class="nav-link ">
+                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+
+            <div class="nav-section">Inventario</div>
+            <a href="/inventario/" class="nav-link ">
+                <i class="bi bi-box-fill"></i> Productos
+            </a>
+            <a href="/movimientos/" class="nav-link ">
+                <i class="bi bi-arrow-left-right"></i> Movimientos
+            </a>
+
+            <div class="nav-section">Sistema</div>
+            <a href="/alertas/" class="nav-link ">
+                <i class="bi bi-exclamation-triangle-fill"></i> Alertas
+                
+            </a>
+            <a href="/reportes/" class="nav-link ">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i> Reportes
+            </a>
+
+            
+            <div class="nav-section">Administración</div>
+            <a href="/usuarios/" class="nav-link ">
+                <i class="bi bi-people-fill"></i> Usuarios
+            </a>
+            <a href="/admin/" class="nav-link" target="_blank">
+                <i class="bi bi-gear-fill"></i> Django Admin
+            </a>
+            
+        </nav>
+
+        <div class="sidebar-footer">
+            <i class="bi bi-person-circle"></i>
+            Amin Rol<br>
+            <small>Administrador — Sin dept.</small>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="main-content">
+
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="topbar-title">Inventario</span>
+            </div>
+            <div class="topbar-actions">
+                <a href="/alertas/" title="Alertas">
+                    <i class="bi bi-bell-fill"></i>
+                    
+                </a>
+                <form method="post" action="/logout/" style="display:inline;">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="mRJy5sc08tPngC8X2wC8VIMYKCY21BNEyqhSmK6qVwSsNrF0VfijHVJpePdd5pU0">
+                    <button type="submit" class="btn-outline" style="font-size:0.85rem;">
+                        <i class="bi bi-box-arrow-right"></i> Salir
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="page-content">
+            <!-- Flash Messages -->
+            
+
+            
+<div class="page-header">
+    <h1><i class="bi bi-box-fill" style="color:var(--accent);"></i> Productos</h1>
+    <div class="d-flex gap-2 align-items-center">
+        <form class="search-bar" method="get">
+            
+            <select name="department" class="form-select me-2" style="width: auto;" onchange="this.form.submit()">
+                <option value="">Todos los deptos</option>
+                
+                <option value="1" selected>IT</option>
+                
+                <option value="2" >Recursos Humanos</option>
+                
+            </select>
+            
+            <input type="text" name="q" class="form-control" placeholder="Buscar producto..."
+                   value="">
+            <button type="submit" class="btn-outline"><i class="bi bi-search"></i></button>
+        </form>
+        <a href="/inventario/crear/" class="btn-sigid">
+            <i class="bi bi-plus-lg"></i> Nuevo Producto
+        </a>
+    </div>
+</div>
+
+<div class="card-sigid">
+    <div class="card-body" style="padding:0;">
+        <table class="table-sigid">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Departamento</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td><strong>P1</strong></td>
+                    <td>P1</td>
+                    <td>—</td>
+                    <td>IT</td>
+                    <td>10</td>
+                    <td>
+                        
+                            <span class="badge-stock-ok">OK</span>
+                        
+                    </td>
+                    <td>
+                        <a href="/inventario/4/editar/" class="btn-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/inventario/4/eliminar/" class="btn-danger-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td><strong>IT-001</strong></td>
+                    <td>Ratones</td>
+                    <td>Electrónica</td>
+                    <td>IT</td>
+                    <td>10</td>
+                    <td>
+                        
+                            <span class="badge-stock-ok">OK</span>
+                        
+                    </td>
+                    <td>
+                        <a href="/inventario/1/editar/" class="btn-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/inventario/1/eliminar/" class="btn-danger-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td><strong>IT-002</strong></td>
+                    <td>Teclados</td>
+                    <td>Electrónica</td>
+                    <td>IT</td>
+                    <td>20</td>
+                    <td>
+                        
+                            <span class="badge-stock-ok">OK</span>
+                        
+                    </td>
+                    <td>
+                        <a href="/inventario/3/editar/" class="btn-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="/inventario/3/eliminar/" class="btn-danger-outline" style="padding:4px 10px;font-size:0.8rem;">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    
+</body>
+</html>

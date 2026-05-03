@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes — SIGID{% endblock %}
+{% block page_title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="bi bi-file-earmark-bar-graph-fill" style="color:var(--accent);"></i> Reportes</h1>
+    <div class="d-flex gap-2">
+        <a href="{% url 'reportes:export_products' %}" class="btn-outline">
+            <i class="bi bi-download"></i> Exportar Inventario (CSV)
+        </a>
+        <a href="{% url 'reportes:export_movements' %}{% if date_from or date_to %}?date_from={{ date_from }}&date_to={{ date_to }}{% endif %}"
+           class="btn-outline">
+            <i class="bi bi-download"></i> Exportar Movimientos (CSV)
+        </a>
+    </div>
+</div>
+
+<!-- ═══ Filtros de Fecha ═══ -->
+<div class="card-sigid mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex align-items-end gap-3 flex-wrap">
+            <div>
+                <label class="form-label">Fecha desde</label>
+                <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+            </div>
+            <div>
+                <label class="form-label">Fecha hasta</label>
+                <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+            </div>
+            <button type="submit" class="btn-sigid">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <a href="{% url 'reportes:report' %}" class="btn-outline">Limpiar</a>
+        </form>
+    </div>
+</div>
+
+<!-- ═══ Resumen ═══ -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card-sigid">
+            <div class="card-body stat-card accent">
+                <div class="stat-number">{{ products.count }}</div>
+                <div class="stat-label">Productos Registrados</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-sigid">
+            <div class="card-body stat-card success">
+                <div class="stat-number">{{ total_entries }}</div>
+                <div class="stat-label">Total Entradas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-sigid">
+            <div class="card-body stat-card danger">
+                <div class="stat-number">{{ total_exits }}</div>
+                <div class="stat-label">Total Salidas</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Inventario Actual ═══ -->
+<div class="card-sigid mb-4">
+    <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-box-fill" style="color:var(--accent);"></i> Inventario Actual</h5>
+        <table class="table-sigid">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Departamento</th>
+                    <th>Stock</th>
+                    <th>Mínimo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td>{{ p.code }}</td>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.category|default:"—" }}</td>
+                    <td>{{ p.department.name }}</td>
+                    <td>{{ p.quantity }}</td>
+                    <td>{{ p.min_stock }}</td>
+                    <td>
+                        {% if p.quantity == 0 %}
+                            <span class="badge-stock-zero">Sin Stock</span>
+                        {% elif p.is_low_stock %}
+                            <span class="badge-stock-low">Bajo</span>
+                        {% else %}
+                            <span class="badge-stock-ok">OK</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══ Historial de Movimientos ═══ -->
+<div class="card-sigid">
+    <div class="card-body">
+        <h5 class="mb-3"><i class="bi bi-clock-history" style="color:var(--accent);"></i> Historial de Movimientos</h5>
+        <table class="table-sigid">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Responsable</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in movements %}
+                <tr>
+                    <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ m.product.name }}</td>
+                    <td><span class="badge-{{ m.type }}">{{ m.get_type_display }}</span></td>
+                    <td>{{ m.quantity }}</td>
+                    <td>{{ m.user.get_full_name|default:m.user.username }}</td>
+                    <td style="color:var(--text-muted);">{{ m.observation|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center" style="color:var(--text-muted);padding:2rem;">
+                        Sin movimientos en el rango seleccionado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

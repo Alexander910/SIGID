@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — SIGID{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- ═══ Stat Cards ═══ -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card-sigid">
+            <div class="card-body stat-card accent">
+                <div class="stat-icon"><i class="bi bi-box-fill"></i></div>
+                <div class="stat-number">{{ summary.total_products }}</div>
+                <div class="stat-label">Total Productos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card-sigid">
+            <div class="card-body stat-card success">
+                <div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="stat-number">{{ summary.in_stock }}</div>
+                <div class="stat-label">Con Stock</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card-sigid">
+            <div class="card-body stat-card warning">
+                <div class="stat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div class="stat-number">{{ summary.low_stock }}</div>
+                <div class="stat-label">Stock Bajo</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card-sigid">
+            <div class="card-body stat-card danger">
+                <div class="stat-icon"><i class="bi bi-x-circle-fill"></i></div>
+                <div class="stat-number">{{ summary.out_of_stock }}</div>
+                <div class="stat-label">Sin Stock</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- ═══ Recent Movements ═══ -->
+    <div class="col-lg-7">
+        <div class="card-sigid">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Últimos Movimientos</h5>
+                    <a href="{% url 'movimientos:movement_list' %}" class="btn-outline" style="font-size:0.8rem;">
+                        Ver todos <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                <table class="table-sigid">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Cant.</th>
+                            <th>Responsable</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in recent_movements %}
+                        <tr>
+                            <td>{{ m.product.name }}</td>
+                            <td>
+                                <span class="badge-{{ m.type }}">{{ m.get_type_display }}</span>
+                            </td>
+                            <td>{{ m.quantity }}</td>
+                            <td>{{ m.user.get_full_name|default:m.user.username }}</td>
+                            <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center" style="color:var(--text-muted);">Sin movimientos recientes</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Active Alerts ═══ -->
+    <div class="col-lg-5">
+        <div class="card-sigid">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill" style="color:var(--warning);"></i> Alertas Activas</h5>
+                    <a href="{% url 'alertas:alert_list' %}" class="btn-outline" style="font-size:0.8rem;">
+                        Ver todas <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                {% for alert in active_alerts %}
+                    <div class="alert-sigid alert-warning" style="margin-bottom:0.5rem;padding:0.75rem 1rem;font-size:0.85rem;">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <div>
+                            <strong>{{ alert.product.name }}</strong><br>
+                            <small>{{ alert.message }}</small>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p style="color:var(--text-muted);text-align:center;margin-top:2rem;">
+                        <i class="bi bi-check-circle" style="font-size:2rem;display:block;margin-bottom:0.5rem;color:var(--success);"></i>
+                        Sin alertas activas
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

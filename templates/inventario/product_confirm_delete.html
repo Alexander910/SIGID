@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar Producto — SIGID{% endblock %}
+{% block page_title %}Eliminar Producto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card-sigid">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size:3rem;color:var(--danger);"></i>
+                <h4 class="mt-3">¿Eliminar este producto?</h4>
+                <p style="color:var(--text-secondary);">
+                    Estás a punto de eliminar <strong>{{ object.name }}</strong> ({{ object.code }}).
+                    Esta acción no se puede deshacer.
+                </p>
+
+                <form method="post" class="d-flex gap-2 justify-content-center mt-4">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger-outline">
+                        <i class="bi bi-trash"></i> Sí, eliminar
+                    </button>
+                    <a href="{% url 'inventario:product_list' %}" class="btn-outline">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
