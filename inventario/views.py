@@ -58,13 +58,10 @@ class ProductListView(LoginRequiredMixin, DepartmentFilterMixin, ListView):
             qs = qs.filter(name__icontains=q)
             
         # Filtro por departamento (solo admin)
-        print("IS ADMIN:", getattr(self.request.user, 'is_admin', False))
         if self.request.user.is_admin:
             dept_id = self.request.GET.get('department')
-            print("DEPT ID:", dept_id)
             if dept_id:
                 qs = qs.filter(department_id=dept_id)
-                print("QS AFTER FILTER:", qs.query)
                 
         return qs
 
@@ -96,6 +93,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
+        # Security: Prevent non-admins from setting an arbitrary department
         if self.request.user.role != 'admin':
             form.instance.department = self.request.user.department
         return super().form_valid(form)
@@ -112,6 +110,13 @@ class ProductUpdateView(LoginRequiredMixin, DepartmentFilterMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        # Security: Prevent non-admins from changing the department
+        # via tampered POST data.
+        if self.request.user.role != 'admin':
+            form.instance.department = self.request.user.department
+        return super().form_valid(form)
 
 
 class ProductDeleteView(LoginRequiredMixin, DepartmentFilterMixin, DeleteView):
