@@ -113,6 +113,12 @@ class ProductUpdateView(LoginRequiredMixin, DepartmentFilterMixin, UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def form_valid(self, form):
+        # Evitar cambio de departamento por POST tampered
+        if self.request.user.role != 'admin':
+            form.instance.department = self.request.user.department
+        return super().form_valid(form)
+
 
 class ProductDeleteView(LoginRequiredMixin, DepartmentFilterMixin, DeleteView):
     """Eliminar producto."""
