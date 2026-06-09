@@ -1,0 +1,4 @@
+## 2025-05-22 - IDOR in AlertMarkReadView
+**Vulnerability:** Insecure Direct Object Reference (IDOR) in `AlertMarkReadView`. Non-admin users could mark any alert as read by providing its ID in a POST request, regardless of whether the alert belonged to their department.
+**Learning:** Generic views or manual `View` implementations that don't inherit from filtered mixins or don't manually apply filtering in their action methods (like `post`) are prone to IDOR. While `AlertListView` used `DepartmentFilterMixin`, `AlertMarkReadView` used `get_object_or_404(Alert, pk=pk)` without any department filtering.
+**Prevention:** Always filter the queryset by the user's ownership or department before performing actions on specific objects. In this codebase, for non-admins, alerts should be filtered by `product__department=request.user.department`.
