@@ -1,0 +1,4 @@
+## 2025-05-15 - IDOR vulnerability in manual POST views
+**Vulnerability:** Insecure Direct Object Reference (IDOR) in `AlertMarkReadView`.
+**Learning:** Generic views that don't inherit from `DepartmentFilterMixin` or use custom `post` methods without manual queryset filtering allow non-admin users to manipulate data from other departments by providing their IDs. In this case, `AlertMarkReadView` inherited from `View` and used `get_object_or_404(Alert, pk=pk)`, which didn't restrict the scope to the user's department.
+**Prevention:** Always filter the queryset by the user's department (or relevant authorization boundary) before retrieving objects in manual `post` methods or any view not automatically filtered. Use `get_object_or_404(filtered_queryset, pk=pk)` to ensure a 404 is returned for unauthorized access.
