@@ -1,0 +1,4 @@
+## 2025-05-15 - IDOR in AlertMarkReadView
+**Vulnerability:** Insecure Direct Object Reference (IDOR) in `AlertMarkReadView`. A user with the 'encargado' role could mark any alert in the system as read by providing its ID in a POST request, even if the alert belonged to a product in a different department.
+**Learning:** Generic Django `View` classes that implement manual `post` methods bypass the automatic queryset filtering provided by `DepartmentFilterMixin` (which only affects `get_queryset` used by generic views like `ListView`, `DetailView`, etc.).
+**Prevention:** When using `get_object_or_404` or direct lookups in manual view methods, always explicitly filter the queryset by the user's department (or relevant relationship) for non-admin users. Add security tests that specifically attempt cross-department access to sensitive operations.
