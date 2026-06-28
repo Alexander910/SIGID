@@ -1,0 +1,4 @@
+## 2025-05-15 - IDOR in Manual View Implementations
+**Vulnerability:** Insecure Direct Object Reference (IDOR) in `AlertMarkReadView`. Users could mark any alert as read by providing its ID in a POST request, even if the alert belonged to a product in a different department.
+**Learning:** Generic mixins like `DepartmentFilterMixin` only automatically apply to views that use standard Django generic view methods (like `get_queryset`). Manual `View` implementations that handle requests directly (e.g., in a `post` method) bypass these mixins if they perform direct lookups via `get_object_or_404(Model, pk=pk)`.
+**Prevention:** Always use a filtered queryset instead of the model class when performing lookups in manual view methods. For example, use `get_object_or_404(Model.objects.filter(department=request.user.department), pk=pk)`.
