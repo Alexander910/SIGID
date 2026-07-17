@@ -1,0 +1,4 @@
+## 2025-02-14 - Department Filtering Bypass in Non-Generic Views
+**Vulnerability:** The AlertMarkReadView class inherits directly from Django's base View and manually implements the post method. It lacked department filtering for non-admin users, resulting in Insecure Direct Object Reference (IDOR) where any authenticated user could mark any system alert as read by sending its ID.
+**Learning:** Views that bypass Django's generic view system and the DepartmentFilterMixin helper (which filters get_queryset) require manual, explicit checks. Standard mixins only hook into generic view querysets, leaving standard View HTTP methods vulnerable if they query models directly.
+**Prevention:** When implementing non-generic Views (inheriting directly from View), always explicitly filter model querysets using request.user.department before calling get_object_or_404 or performing bulk database updates.
