@@ -1,0 +1,4 @@
+## 2026-07-27 - IDOR in AlertMarkReadView Bypassing Department Isolation
+**Vulnerability:** The `AlertMarkReadView` view implemented a manual `post` method inheriting directly from the base Django `View` without filtering the retrieved `Alert` object by the user's department, allowing any authenticated user to mark any alert across the entire system as read (Insecure Direct Object Reference).
+**Learning:** Generic class-based views or mixins like `DepartmentFilterMixin` apply to standard queryset-based flow, but manual `post` or custom methods that directly fetch objects via `get_object_or_404(Model, pk=pk)` completely bypass the mixin logic unless the queryset itself is explicitly filtered.
+**Prevention:** Always ensure that direct object lookups in manual HTTP method handlers filter the queryset by the user's department or tenant boundaries before calling `get_object_or_404` or executing DB queries.
