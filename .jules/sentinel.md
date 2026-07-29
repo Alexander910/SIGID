@@ -1,0 +1,4 @@
+## 2026-07-29 - IDOR Vulnerability in AlertMarkReadView
+**Vulnerability:** The `AlertMarkReadView` class handled POST requests to mark specific alerts as read using `get_object_or_404(Alert, pk=pk)` without verifying that the alert belongs to the current user's department, allowing any authenticated non-admin user to mark any alert across the entire system as read.
+**Learning:** Views inheriting from the base `View` class that implement custom request methods (like `post`) do not automatically inherit filtering from query-filtering mixins like `DepartmentFilterMixin` unless querysets are filtered explicitly within the method. Direct PK lookup on model managers defaults to the entire database, leading to IDOR.
+**Prevention:** Always restrict querysets in custom `View` methods by filtering against the requesting user's authorization bounds (e.g., department, owner ID) before calling retrieval helper functions such as `get_object_or_404`.
