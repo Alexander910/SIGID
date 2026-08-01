@@ -1,0 +1,1 @@
+# Alertas app tests package

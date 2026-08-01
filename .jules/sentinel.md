@@ -1,0 +1,4 @@
+## 2026-08-01 - IDOR in AlertMarkReadView
+**Vulnerability:** The `AlertMarkReadView` marked single alerts as read by querying `Alert.objects.all()` using the provided primary key without checking if the user belonged to the alert's product department. This allowed non-admin users to view/modify alerts across departments (Insecure Direct Object Reference).
+**Learning:** Django views implementing manual `post` methods (subclassing `View` directly rather than generic edit views) bypass the standard filter mixins (like `DepartmentFilterMixin`). Such views require explicit queryset filtering within their handlers to enforce data isolation.
+**Prevention:** Always scope the base queryset passed to `get_object_or_404` or filtering mechanisms inside custom request handler methods. For alerts, ensure they are filtered by `product__department` using `request.user.department` for any non-admin role.
