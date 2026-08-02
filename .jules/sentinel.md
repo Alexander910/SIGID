@@ -1,0 +1,4 @@
+## 2026-08-02 - IDOR in AlertMarkReadView
+**Vulnerability:** The `AlertMarkReadView` endpoint allowed any authenticated user to mark any system alert as read via direct object reference (IDOR). Non-admin users with an 'encargado' role could access and update alerts belonging to products of departments other than their own.
+**Learning:** Views inheriting from base `View` that implement custom `post` or `get` handlers do not benefit from automated queryset filtering provided by `DepartmentFilterMixin` unless manually integrated, leading to authorization bypass when object retrieval relies solely on model primary keys.
+**Prevention:** Always filter querysets explicitly by the user's assigned department (e.g. `product__department`) before performing `get_object_or_404` lookups in custom view handlers, or ensure all detail views utilize robust query-level isolation.
