@@ -1,0 +1,4 @@
+## 2026-08-04 - Department Isolation Bypass via IDOR in Manual View POST Handlers
+**Vulnerability:** Django views inheriting from base `View` that implement manual `post` methods (like `AlertMarkReadView` in `alertas/views.py`) bypass the `DepartmentFilterMixin` query restrictions, allowing IDOR vulnerabilities where users from one department can mark alerts belonging to another department as read.
+**Learning:** Non-generic Views or manual POST methods that do not use standard mixin-filtered querysets (such as calling `get_object_or_404(Model, pk=pk)` directly) fail to enforce department-based access control filters.
+**Prevention:** Always filter the model's queryset by the user's department (e.g. `product__department=request.user.department` for non-admin users) before calling object retrieval helper functions in manual POST or GET handlers.
