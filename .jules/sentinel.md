@@ -1,0 +1,4 @@
+## 2026-08-05 - IDOR in AlertMarkReadView
+**Vulnerability:** `AlertMarkReadView` processed `POST` requests and retrieved `Alert` objects using `get_object_or_404(Alert, pk=pk)` without checking the user's department permissions. This allowed non-admin users to mark alerts belonging to other departments as read (Insecure Direct Object Reference).
+**Learning:** Django views inheriting from base `View` that implement manual `post` methods do not automatically utilize querysets or `DepartmentFilterMixin` filtering logic. Since they perform object lookups manually, they must explicitly filter database operations based on the user's authorization level.
+**Prevention:** Always ensure that views utilizing manual object retrieval (e.g., in `post` or `get` methods) validate object ownership or departmental context before performing updates, or filter lookups using relation paths like `product__department` in the database query itself.
