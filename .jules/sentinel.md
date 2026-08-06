@@ -1,0 +1,4 @@
+## 2026-08-06 - IDOR in AlertMarkReadView
+**Vulnerability:** The `AlertMarkReadView` endpoint allowed logged-in users with any role to mark any alert as read regardless of department isolation. By issuing a POST request to `/alertas/<id>/leida/` with any alert ID, a non-admin user could read/modify alerts outside their assigned department.
+**Learning:** While the system enforces department isolation for list views using a custom `DepartmentFilterMixin`, non-generic views that override standard request handling (like `View.post`) bypass these standard mixins and require explicit queryset filtering prior to calling object retrievers like `get_object_or_404`.
+**Prevention:** Always filter querysets according to user role and department context within individual object retrieval functions (`get_object_or_404`) instead of assuming general views or mixins cover all request methods and overrides.
