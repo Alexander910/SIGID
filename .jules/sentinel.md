@@ -1,0 +1,4 @@
+## 2026-08-15 - IDOR Vulnerability in Base View Subclasses
+**Vulnerability:** `AlertMarkReadView` inherited directly from `django.views.View` and retrieved objects using `get_object_or_404(Alert, pk=pk)` without checking whether the alert belonged to the user's assigned department. This created an Insecure Direct Object Reference (IDOR) vulnerability where non-admin users could mark alerts from other departments as read.
+**Learning:** Generic class-based views that use `DepartmentFilterMixin` automatically filter querysets via `get_queryset()`. However, views extending base `View` and manually performing database lookups in `get()`, `post()`, etc., bypass `DepartmentFilterMixin` and require explicit queryset filtering before calling `get_object_or_404`.
+**Prevention:** Always filter querysets by tenant/department constraints before calling `get_object_or_404` or executing DB mutations in custom view methods.
