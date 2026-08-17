@@ -1,0 +1,4 @@
+## 2026-08-17 - IDOR in Views Inheriting Directly from Base View
+**Vulnerability:** `AlertMarkReadView` in `alertas/views.py` inherited from `View` and called `get_object_or_404(Alert, pk=pk)` without checking the user's department, resulting in an Insecure Direct Object Reference (IDOR) flaw where non-admin users from one department could modify alerts belonging to other departments.
+**Learning:** `DepartmentFilterMixin` is designed for generic views like `ListView`, `DetailView`, or `UpdateView`. Views that inherit directly from `View` and override `post()` bypass `DepartmentFilterMixin` and require explicit department filtering (`qs.filter(product__department=request.user.department)`) before fetching objects with `get_object_or_404`.
+**Prevention:** Always verify department authorization in custom `View` classes before performing operations on model instances.
