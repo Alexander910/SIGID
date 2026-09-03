@@ -1,0 +1,4 @@
+## 2026-09-03 - IDOR Protection in Direct View Subclasses
+**Vulnerability:** `AlertMarkReadView` processed `POST` requests to mark individual alerts as read using `get_object_or_404(Alert, pk=pk)` without enforcing department-level tenant isolation for non-admin users. This allowed users from one department to modify alerts belonging to products in another department.
+**Learning:** `DepartmentFilterMixin` is only triggered automatically when generic views use `get_queryset()`. Plain `View` implementations with custom `post` methods that query models directly bypass mixin filters unless explicit department filtering is applied.
+**Prevention:** Always filter model querysets by `request.user.department` (or relevant relation, e.g., `product__department`) before performing `get_object_or_404` or updates in non-generic view methods.
