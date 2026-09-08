@@ -1,0 +1,4 @@
+## 2026-09-08 - View.post IDOR Vulnerability Pattern in Django
+**Vulnerability:** Views inheriting from generic `View` rather than `ListView`/`DetailView`/`UpdateView` (e.g. `AlertMarkReadView`) bypass `DepartmentFilterMixin` logic, allowing cross-tenant / cross-department IDOR via direct object ID lookup (`get_object_or_404(Model, pk=pk)`).
+**Learning:** `DepartmentFilterMixin` overrides `get_queryset()` on generic views. Custom `View` subclasses that define a manual `post()` method and perform `get_object_or_404` directly on `Model.objects` bypass `get_queryset()` and fail to enforce departmental authorization.
+**Prevention:** Always construct a queryset filtered by `request.user.department` (or `product__department`) for non-admin users before invoking `get_object_or_404` in custom `View` handlers.
