@@ -1,0 +1,4 @@
+## 2026-09-09 - IDOR Vulnerability in Non-Generic Custom Post Views
+**Vulnerability:** `AlertMarkReadView` directly performed `get_object_or_404(Alert, pk=pk)` in its `post` method without filtering the queryset by the user's assigned department, permitting non-admin users to mark alerts from other departments as read.
+**Learning:** Generic views utilizing `DepartmentFilterMixin` apply department-level authorization filtering in `get_queryset()`. However, custom `View` subclasses implementing manual `post` methods bypass mixin query filtering if `get_object_or_404` is called directly on the model class rather than a filtered queryset.
+**Prevention:** Always construct a filtered queryset (e.g. scoping by `request.user.department` for non-admin users) before passing it to `get_object_or_404` in custom view methods.
