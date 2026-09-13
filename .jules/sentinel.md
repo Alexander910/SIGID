@@ -1,0 +1,4 @@
+## 2026-09-13 - Manual View.post Method Bypasses DepartmentFilterMixin IDOR Protections
+**Vulnerability:** Views inheriting directly from Django's base `View` (such as `AlertMarkReadView`) perform object retrieval with `get_object_or_404(Alert, pk=pk)` without enforcing department-level isolation for non-admin users, leading to Insecure Direct Object References (IDOR).
+**Learning:** `DepartmentFilterMixin` is designed for Django generic display/editing views (e.g. `ListView`, `DetailView`) and does not automatically restrict querysets retrieved manually inside custom `post` methods on base `View` classes.
+**Prevention:** Always filter querysets explicitly by `product__department` or relevant department relationship when fetching single objects in custom `View.post` methods for non-admin users.
