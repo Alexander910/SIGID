@@ -1,0 +1,4 @@
+## 2026-09-15 - Manual IDOR Protection in Non-Generic Base Views
+**Vulnerability:** `AlertMarkReadView` inheriting directly from Django `View` fetched `Alert` objects using `get_object_or_404(Alert, pk=pk)` without scope filtering, exposing an IDOR vulnerability where non-admin users could mark alerts from other departments as read.
+**Learning:** Generic views using `DepartmentFilterMixin` apply department restrictions automatically on `get_queryset()`. Custom base `View` classes with manual `post()` methods bypass mixin queryset filtering if `get_object_or_404` is called directly on the model class rather than a filtered queryset.
+**Prevention:** Always construct a filtered queryset based on user role and department (`request.user.department`) before passing it to `get_object_or_404` in custom views.
