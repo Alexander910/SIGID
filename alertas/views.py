@@ -20,7 +20,11 @@ class AlertMarkReadView(LoginRequiredMixin, View):
     """Marcar alerta como leída."""
 
     def post(self, request, pk):
-        alert = get_object_or_404(Alert, pk=pk)
+        qs = Alert.objects.all()
+        if request.user.role != 'admin':
+            # Security: Filter by department to prevent IDOR
+            qs = qs.filter(product__department=request.user.department)
+        alert = get_object_or_404(qs, pk=pk)
         alert.is_read = True
         alert.save(update_fields=['is_read'])
         return redirect('alertas:alert_list')
