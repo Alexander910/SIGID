@@ -1,0 +1,4 @@
+## 2026-10-01 - Department Isolation in Generic vs Custom Views
+**Vulnerability:** IDOR in `AlertMarkReadView` allowed non-admin users to mark alerts belonging to other departments as read by submitting a POST request with an arbitrary alert primary key.
+**Learning:** Generic class-based views that inherit from `DepartmentFilterMixin` automatically apply queryset filtering for list/detail views, but custom `View` classes with manual `post` methods (or endpoints retrieving objects via `get_object_or_404`) bypass the mixin unless explicitly filtered against `request.user.department`.
+**Prevention:** Always filter the base queryset passed to `get_object_or_404` by `product__department=request.user.department` (or equivalent department relationship) for non-admin users in custom view handlers.
