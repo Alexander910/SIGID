@@ -134,3 +134,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ───────────────────────────────────────────────
+# Configuración de Seguridad (Security Headers & Cookies)
+# ───────────────────────────────────────────────
+# Security: Explicit security configurations to protect against XSS, clickjacking, and MIME-sniffing
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
