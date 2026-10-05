@@ -1,0 +1,4 @@
+## 2026-10-05 - Direct View Subclasses Bypass DepartmentFilterMixin Data Isolation
+**Vulnerability:** Views inheriting directly from `django.views.View` (such as `AlertMarkReadView`) that perform actions on specific object IDs via POST without filtering queryset by `request.user.department` allow IDOR vulnerabilities.
+**Learning:** `DepartmentFilterMixin` is designed for generic views (`ListView`, `UpdateView`, etc.) that call `get_queryset()`. Custom `View` subclasses implementing `post()` methods bypass this mixin logic if they call `get_object_or_404(Model, pk=pk)` directly without filtering.
+**Prevention:** For custom `View` subclasses handling POST requests on specific model instances, explicitly filter `Model.objects` by `product__department` or `department` matching `request.user.department` for non-admin users before invoking `get_object_or_404`.
