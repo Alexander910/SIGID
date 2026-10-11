@@ -1,0 +1,4 @@
+## 2026-10-11 - Direct View Subclasses Bypass Mixin Queryset Filtering (IDOR Risk)
+**Vulnerability:** Views inheriting directly from `django.views.View` (e.g. `AlertMarkReadView`) bypass generic queryset mixins such as `DepartmentFilterMixin`, allowing users to perform unauthorized actions on resources across departments via IDOR.
+**Learning:** Generic mixins like `DepartmentFilterMixin` only automatically affect generic view methods like `get_queryset()`. Custom `post()` methods on raw `View` classes retrieving objects with `get_object_or_404(Model, pk=pk)` will query all objects unless explicit filtering is applied.
+**Prevention:** Ensure all custom `View` actions filter the target queryset explicitly by `request.user.department` (or relevant relationship) before executing `get_object_or_404`.
