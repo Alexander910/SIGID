@@ -1,0 +1,4 @@
+## 2026-10-17 - Manual POST Views and Department Isolation Bypass
+**Vulnerability:** Views inheriting directly from base `View` with manual `post` methods (e.g. `AlertMarkReadView`) bypass `DepartmentFilterMixin` logic because mixins override `get_queryset()`, which non-generic `View` subclasses don't execute automatically.
+**Learning:** `DepartmentFilterMixin` only automatically isolates data on generic views (`ListView`, `UpdateView`, `DeleteView`) that utilize `get_queryset()`. Manual `View` subclasses that look up objects directly with `get_object_or_404(Model, pk=pk)` will bypass department restrictions unless explicit queryset filtering (e.g. `product__department`) is added prior to lookup.
+**Prevention:** For any non-generic `View` subclass handling single-object operations, ensure `get_object_or_404` passes a filtered queryset (`qs.filter(product__department=request.user.department)`) rather than querying the model directly.
