@@ -1,0 +1,4 @@
+## 2026-10-20 - Manual POST Views Bypassing Department Isolation Mixins
+**Vulnerability:** Django views inheriting directly from base `View` that implement custom `post` methods (such as `AlertMarkReadView`) bypass `DepartmentFilterMixin` logic, allowing non-admin users to manipulate objects from other departments (IDOR).
+**Learning:** `DepartmentFilterMixin` overrides `get_queryset()` for generic class-based views (e.g. `ListView`, `UpdateView`). Views inheriting directly from `django.views.View` with custom `get_object_or_404(Model, pk=pk)` calls do not utilize `get_queryset()` unless explicitly passed a filtered queryset.
+**Prevention:** In non-generic views or manual handlers, always explicitly construct a filtered queryset (`qs = Model.objects.filter(...)` or apply user department filtering) before fetching instances with `get_object_or_404(qs, pk=pk)`.
