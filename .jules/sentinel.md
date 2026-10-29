@@ -1,0 +1,4 @@
+## 2026-10-29 - Manual View Implementation Bypassing Mixin Department Isolation (IDOR)
+**Vulnerability:** The `AlertMarkReadView` handled POST requests by fetching alerts directly with `get_object_or_404(Alert, pk=pk)` without filtering by the user's department, allowing non-admin users to mark alerts from other departments as read (Insecure Direct Object Reference).
+**Learning:** Custom views inheriting directly from base `View` rather than `ListView`/`UpdateView` do not automatically inherit `DepartmentFilterMixin` query logic. Manual `get_object_or_404` calls in `post` or `get` methods must explicitly apply departmental scope filters for non-admin users.
+**Prevention:** Always filter model querysets by `request.user.department` (or relevant foreign key path such as `product__department`) before performing single-object operations in custom Django `View` classes.
