@@ -1,0 +1,4 @@
+## 2026-05-07 - IDOR in Custom POST Handlers Bypassing DepartmentFilterMixin
+**Vulnerability:** AlertMarkReadView implemented a manual `post()` method that retrieved the alert via `get_object_or_404(Alert, pk=pk)` without scoping the queryset to the user's assigned department, allowing non-admin users to mark alerts belonging to other departments as read.
+**Learning:** Generic views inheriting from Django's base `View` that implement manual request methods bypass `DepartmentFilterMixin` logic. Developers often remember to filter in `ListView` or `UpdateView` where mixins hook into `get_queryset()`, but omit departmental scoping in standalone `post` endpoints.
+**Prevention:** For custom `View` classes or standalone endpoints handling object updates/actions, always scope querysets explicitly using `request.user.department` (e.g. `product__department` for alerts) for non-admin users before invoking `get_object_or_404`.
