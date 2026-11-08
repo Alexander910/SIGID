@@ -1,0 +1,4 @@
+## 2026-11-08 - IDOR in AlertMarkReadView
+**Vulnerability:** In `alertas/views.py`, `AlertMarkReadView` inherited from Django's base `View` and directly queried `Alert` by primary key via `get_object_or_404(Alert, pk=pk)` without checking department tenancy. Non-admin users (`encargado`) could mark alerts belonging to other departments as read by submitting a POST request with an arbitrary primary key.
+**Learning:** Generic views utilizing `DepartmentFilterMixin` apply department scoping automatically, but views deriving from base `View` that implement custom request handlers (e.g. `post`) bypass mixins and must explicitly scope querysets by `request.user.department` (or `product__department` for alerts) for non-admin users.
+**Prevention:** Always scope querysets before passing to `get_object_or_404` in custom views to ensure tenant isolation, and add unit tests validating cross-department unauthorized access attempts return 404.
