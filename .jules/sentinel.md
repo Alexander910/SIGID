@@ -1,0 +1,4 @@
+## 2026-11-09 - IDOR Prevention in AlertMarkReadView
+**Vulnerability:** `AlertMarkReadView` handled POST requests by fetching `Alert` directly with `get_object_or_404(Alert, pk=pk)` without enforcing department isolation. As a result, non-admin users ('encargado') could mark alerts belonging to other departments as read by submitting requests with arbitrary alert IDs (Insecure Direct Object Reference).
+**Learning:** Generic list views rely on `DepartmentFilterMixin` for scoping querysets, but custom `View` classes implementing direct `post` methods bypass mixin logic unless department filtering is explicitly applied to the queryset passed to `get_object_or_404`.
+**Prevention:** For custom non-generic views that mutate resources based on primary key lookup, always scope the query by `product__department=request.user.department` (or relevant relationship) when the user does not possess administrative privileges.
